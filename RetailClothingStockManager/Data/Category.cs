@@ -12,9 +12,9 @@ namespace RetailClothingStockManagerAPI.Data
         public int CategoryId { get; set; }
 
         [Required]
-        [Column("categoryName")]
+        [Column("catagoryName")]
         [StringLength(255)]
-        public string CategoryName { get; set; }
+        public string CatagoryName { get; set; }
 
         public virtual ICollection<Product> Products { get; set; }
     }

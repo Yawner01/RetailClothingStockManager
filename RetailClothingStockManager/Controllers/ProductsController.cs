@@ -1,19 +1,43 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RetailClothingStockManagerAPI.Data; 
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace RetailClothingStockManager.Controllers
+
+namespace RetailClothingStockManagerAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")] 
     public class ProductsController : ControllerBase
     {
-        //database connection logic here
+        private readonly ApplicationDbContext _context;
+
+        public ProductsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        {
+            var products = await _context.Products.ToListAsync();
+            return Ok(products);
+        }
 
         [HttpPost]
-        public IActionResult AddProduct([FromBody] Product Newproduct)
+        public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-            //logic to add the product to the database
-            //return appropriate response
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetProducts), new { id = product.ProductId }, product);
         }
     }
+
 }
