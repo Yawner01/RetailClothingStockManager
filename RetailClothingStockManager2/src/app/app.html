@@ -1,6 +1,6 @@
 <div class="container">
   <header class="header">
-    <h1>{{ title }}</h1>
+    <h1>Retail Clothing Stock Manager - Main Page</h1>
   </header>
 
   <section class="actions-section">
@@ -43,5 +43,28 @@
         <span>Quantity: {{ product.quantity }}</span>
       </li>
     </ul>
+  </section>
+
+
+  <!-- Needs added verification, will add proposed implementation in comments -->
+  <section class="admin panel">
+    <div class="admin-header">
+      <h2>Admin Panel</h2>
+
+        <button id="adminButton" onclick="toPanel()" class="btn btn-secondary">Go to panel</button>
+
+    </div>
+
+    <script>
+      const isAdmin = true; // Need to pull admin status from login page
+      document.getElementById('adminButton').disabled = !isAdmin; // You could also disable to admin
+      // section as a whole if you wish
+
+      function toPanel() {
+        if (isAdmin) {
+            window.location.href = 'admin_panel.html';
+        }
+      }
+    </script>
   </section>
 </div>

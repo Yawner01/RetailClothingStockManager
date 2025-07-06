@@ -1,0 +1,169 @@
+<div class="container">
+  <header class="header">
+    <h1>Retail Clothing Stock Manager - Admin Panel</h1>
+  </header>
+
+  <section class="actions-section">
+    <button *ngIf="!isAddProductVisible" (click)="showAddProductForm()" class="btn btn-primary">
+      Click here to enter a product
+    </button>
+
+    <div *ngIf="isAddProductVisible" class="form-container">
+      <h2>Force Add New Product</h2>
+      <form (ngSubmit)="addProduct()">
+        <div class="form-field">
+          <label for="name">Product Name:</label>
+          <input type="text" id="name" name="name" [(ngModel)]="newProduct.name" required>
+        </div>
+        <div class="form-field">
+          <label for="price">Price:</label>
+          <input type="number" id="price" name="price" [(ngModel)]="newProduct.price" required>
+        </div>
+        <div class="form-field">
+          <label for="quantity">Quantity:</label>
+          <input type="number" id="quantity" name="quantity" [(ngModel)]="newProduct.quantity" required>
+        </div>
+        <button type="submit" class="btn btn-success">Save Product</button>
+      </form>
+    </div>
+  </section>
+
+<section class="inventory-section">
+  <div class="inventory-header">
+    <h2>Current Inventory</h2>
+    <button (click)="getProducts()" class="btn btn-secondary">Refresh List</button>
+  </div>
+  
+  <p *ngIf="products.length === 0" class="empty-message">No products to display. Add one or click "Refresh".</p>
+  
+  <ul *ngIf="products.length > 0" class="product-list">
+    <li *ngFor="let product of products; let i = index">
+      <div *ngIf="!product.isEditing" class="product-display">
+        <span><strong>{{ product.name }}</strong></span>
+        <span>Price: ${{ product.price }}</span>
+        <span>Quantity: {{ product.quantity }}</span>
+        <button (click)="toggleEdit(i)" class="btn btn-sm btn-primary">Edit</button>
+      </div>
+
+      <!-- This section is not hooked up to anything, but it's intended to allow for insertion
+       of new values to replace shown ones. Idk how you wanna implement this but
+       if you need to nuke it to make it easier feel free to, this is just a suggested skeleton -->
+      
+      <div *ngIf="product.isEditing" class="product-edit">
+        <div class="edit-field">
+          <label>Name:</label>
+          <input type="text" class="form-control">
+        </div>
+        <div class="edit-field">
+          <label>Price:</label>
+          <input type="number" step="0.01" class="form-control">
+        </div>
+        <div class="edit-field">
+          <label>Quantity:</label>
+          <input type="number" class="form-control">
+        </div>
+        <div class="edit-buttons">
+          <button (click)="saveProduct" class="btn btn-sm btn-success">Save</button>
+          <button (click)="cancelEdit" class="btn btn-sm btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </li>
+  </ul>
+  </section>
+
+  <section>
+
+    <div class="user-header">
+    <h2>Current Users</h2>
+    <!-- getUsers() is a placeholder, supposed to get list of all users. Throughout the rest of
+     the section placeholder "user" or "users" will be used-->
+    <button (click)="getUsers()" class="btn btn-secondary">Refresh List</button>
+  </div>
+  
+  <p *ngIf="users.length === 0" class="empty-message">No users to display. Add one or click "Refresh".</p>
+  
+  <ul *ngIf="users.length > 0" class="user-list">
+    <li *ngFor="let user of users; let i = index">
+      <div *ngIf="!user.isEditing" class="user-display">
+        <span><strong>{{ user.name }}</strong></span>
+        <!-- Don't really need this unless you feel like adding levels to users (I.E Staff, admin, 
+         or using numbers like 0, 1, 2 etc)-->
+        <span>Permission: ${{ users.level }}</span>
+        <button (click)="toggleEdit(i)" class="btn btn-sm btn-primary">Edit</button>
+      </div>
+
+      <!-- Same as with products, nothing is hooked up but it should allow for the viewing and changing
+       of relevant information about users.-->
+      
+      <div *ngIf="user.isEditing" class="user-edit">
+        <div class="edit-field">
+          <label>Name:</label>
+          <input type="text" class="form-control">
+        </div>
+        <div class="edit-field">
+          <label>Permission:</label>
+          <input type="text" class="form-control">
+        </div>
+        <div class="edit-buttons">
+          <button (click)="saveUser" class="btn btn-sm btn-success">Save</button>
+          <button (click)="cancelEdit" class="btn btn-sm btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </li>
+  </ul>
+  </section>
+
+    <section>
+
+    <div class="request-header">
+    <h2>Current Requests</h2>
+    <!-- getRequests() is a placeholder, supposed to get list of all current requests. 
+     Throughout the rest of the section placeholder "request" or "requests" will be used
+     
+     Can also just eliminate this section if we decide to not use a request system, but the
+     assignment mentions it so just adding this cause I can-->
+    <button (click)="getRequests()" class="btn btn-secondary">Refresh List</button>
+  </div>
+  
+  <p *ngIf="requests.length === 0" class="empty-message">No requests to display. Add one or click "Refresh".</p>
+  
+  <ul *ngIf="requests.length > 0" class="request-list">
+    <li *ngFor="let request of requests; let i = index">
+      <div *ngIf="!request.isEditing" class="request-display">
+        <span><strong>{{ request.name }}</strong></span>
+        <span><strong>{{ request.producy }}</strong></span>
+        <span>Price: ${{ request.price }}</span>
+        <span>Quantity: {{ request.quantity }}</span>
+        <button (click)="toggleEdit(i)" class="btn btn-sm btn-primary">Edit</button>
+      </div>
+
+      <!-- Same as with products, nothing is hooked up but it should allow for the viewing and changing
+       of relevant information about users.-->
+      
+      <div *ngIf="user.isEditing" class="user-edit">
+        <div class="edit-field">
+          <label>Name:</label>
+          <input type="text" class="form-control">
+        </div>
+        <div class="edit-field">
+          <label>Product:</label>
+          <input type="text" class="form-control">
+        </div>
+        <div class="edit-field">
+          <label>Price:</label>
+          <input type="number" step="0.01" class="form-control">
+        </div>
+        <div class="edit-field">
+          <label>Quantity:</label>
+          <input type="number" class="form-control">
+        </div>
+        <div class="edit-buttons">
+          <button (click)="saveUser" class="btn btn-sm btn-success">Save</button>
+          <button (click)="cancelEdit" class="btn btn-sm btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </li>
+  </ul>
+  </section>
+
+</div>
