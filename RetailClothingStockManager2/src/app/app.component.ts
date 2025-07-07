@@ -7,8 +7,8 @@ import { AuthService } from './core/services/auth.service';
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterOutlet  
+    CommonModule,
+    RouterOutlet
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

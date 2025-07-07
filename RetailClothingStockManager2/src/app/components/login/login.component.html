@@ -1,0 +1,30 @@
+<div class="login-container">
+  <div class="login-box">
+    <header class="header">
+      <h1>Retail Stock Manager</h1>
+      <p>Login</p>
+    </header>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="form-field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" [(ngModel)]="loginCredentials.username" required
+          placeholder="e.g., john_doe" />
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" [(ngModel)]="loginCredentials.password" required
+          placeholder="••••••••" />
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
+        Login
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,122 @@
+<div class="container">
+  <header class="header">
+    <h1>Admin Panel</h1>
+    <p>Manage users, products, and categories.</p>
+  </header>
+
+  <!-- User Management Section -->
+  <section class="management-section">
+    <div class="section-header">
+      <h2>User Management</h2><button (click)="getUsers()" class="btn btn-secondary">Refresh Users</button>
+    </div>
+    <div *ngIf="isLoadingUsers" class="loading-message">Loading users...</div>
+    <div *ngIf="!isLoadingUsers && users.length === 0" class="empty-message">No users found.</div>
+    <ul *ngIf="!isLoadingUsers && users.length > 0" class="item-list">
+      <li *ngFor="let user of users">
+        <div *ngIf="!user.isEditing" class="item-content">
+          <div class="item-info"><span class="item-name"><strong>{{ user.username }}</strong></span><span
+              class="item-detail">Role: {{ user.role }}</span></div>
+          <div class="item-actions"><button (click)="startEdit(user)"
+              class="btn btn-sm btn-primary">Edit</button><button class="btn btn-sm btn-danger" disabled>Delete</button>
+          </div>
+        </div>
+        <div *ngIf="user.isEditing" class="item-content edit-mode">
+          <div class="edit-fields">
+            <div class="form-field-inline"><label>Username:</label><input type="text" [(ngModel)]="user.username"
+                class="form-control-sm"></div>
+            <div class="form-field-inline"><label>Role:</label><select [(ngModel)]="user.role" class="form-control-sm">
+                <option value="Owner">Owner</option>
+                <option value="Staff">Staff</option>
+                <option value="Inactive">Inactive</option>
+              </select></div>
+          </div>
+          <div class="item-actions"><button (click)="saveUser(user)" class="btn btn-sm btn-success">Save</button><button
+              (click)="cancelEdit(user)" class="btn btn-sm btn-secondary">Cancel</button></div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Product Management Section -->
+  <section class="management-section">
+    <div class="section-header">
+      <h2>Product Management</h2>
+    </div>
+    <div class="actions-section"><button *ngIf="!isAddProductVisible" (click)="showAddProductForm()"
+        class="btn btn-primary">Add New Product</button>
+      <div *ngIf="isAddProductVisible" class="form-container">
+        <h3>Add New Product</h3>
+        <form (ngSubmit)="addProduct()" #productForm="ngForm">
+          <div class="form-field"><label for="name">Product Name:</label><input type="text" id="name" name="name"
+              [(ngModel)]="newProduct.name" required></div>
+          <div class="form-field"><label for="price">Price:</label><input type="number" id="price" name="price"
+              [(ngModel)]="newProduct.price" required></div>
+          <div class="form-field"><label for="quantity">Quantity:</label><input type="number" id="quantity"
+              name="quantity" [(ngModel)]="newProduct.quantity" required></div>
+          <div class="form-field"><label for="category">Category:</label><select id="category" name="category"
+              [(ngModel)]="newProduct.categoryId" required>
+              <option value="0" disabled>-- Select a Category --</option>
+              <option *ngFor="let category of categories" [value]="category.categoryId">{{ category.catagoryName }}
+              </option>
+            </select>
+            <div *ngIf="isLoadingCategories">Loading categories...</div>
+          </div>
+          <div class="form-buttons"><button type="submit" class="btn btn-success" [disabled]="!productForm.valid">Save
+              Product</button><button type="button" (click)="isAddProductVisible = false"
+              class="btn btn-secondary">Cancel</button></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3>Current Inventory</h3><button (click)="getProducts()" class="btn btn-secondary">Refresh Products</button>
+    </div>
+    <div *ngIf="isLoadingProducts" class="loading-message">Loading products...</div>
+    <p *ngIf="!isLoadingProducts && products.length === 0" class="empty-message">No products to display.</p>
+
+    <ul *ngIf="!isLoadingProducts && products.length > 0" class="item-list">
+      <li *ngFor="let product of products">
+        <!-- Display Mode -->
+        <div *ngIf="!product.isEditing" class="item-content">
+          <div class="item-info">
+            <span class="item-name"><strong>{{ product.name }}</strong></span>
+            <span class="item-detail">Category: {{ product.category?.catagoryName }}</span>
+            <span class="item-detail">Price: ${{ product.price | number:'1.2-2' }}</span>
+            <span class="item-detail">Quantity: {{ product.quantity }}</span>
+            <span class="item-detail">Status: {{ product.status }}</span>
+          </div>
+          <div class="item-actions">
+            <button (click)="startEditProduct(product)" class="btn btn-sm btn-primary">Edit</button>
+            <button class="btn btn-sm btn-danger" disabled>Delete</button>
+          </div>
+        </div>
+        <!-- Edit Mode -->
+        <div *ngIf="product.isEditing" class="item-content edit-mode">
+          <div class="edit-fields-vertical">
+            <div class="form-field-inline"><label>Name:</label><input type="text" [(ngModel)]="product.name"
+                class="form-control-sm"></div>
+            <div class="form-field-inline"><label>Price:</label><input type="number" [(ngModel)]="product.price"
+                class="form-control-sm"></div>
+            <div class="form-field-inline"><label>Quantity:</label><input type="number" [(ngModel)]="product.quantity"
+                class="form-control-sm"></div>
+            <div class="form-field-inline"><label>Category:</label>
+              <select [(ngModel)]="product.categoryId" class="form-control-sm">
+                <option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.catagoryName }}</option>
+              </select>
+            </div>
+            <div class="form-field-inline"><label>Status:</label>
+              <select [(ngModel)]="product.status" class="form-control-sm">
+                <option value="In Stock">In Stock</option>
+                <option value="Out of Stock">Out of Stock</option>
+              </select>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button (click)="saveProduct(product)" class="btn btn-sm btn-success">Save</button>
+            <button (click)="cancelEditProduct(product)" class="btn btn-sm btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </section>
+</div>

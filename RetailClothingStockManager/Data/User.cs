@@ -23,6 +23,6 @@ namespace RetailClothingStockManagerAPI.Data
         [Required]
         [Column("role")]
         [StringLength(50)]
-        public string Role { get; set; } // "Owner" or "Staff"
+        public string Role { get; set; } // "Owner" or "Staff" or "Inactive"
     }
 }

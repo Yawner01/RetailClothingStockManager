@@ -14,7 +14,7 @@ namespace RetailClothingStockManagerAPI.Data
         [ForeignKey("Product")]
         [Column("productID")]
         public int ProductId { get; set; }
-        public virtual Product Product { get; set; } // Navigation property
+        public virtual Product Product { get; set; } 
 
         [Required]
         [Column("timestamp")]

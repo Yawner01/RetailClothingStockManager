@@ -1,0 +1,13 @@
+<div class="app-shell">
+  <!-- This header will only appear on the admin page when a user is logged in -->
+  <header class="app-header" *ngIf="authService.isLoggedIn()">
+    <div class="header-content">
+      <span class="welcome-message">Welcome, {{ authService.currentUserUsername }}! (Admin)</span>
+      <button (click)="logout()" class="btn btn-secondary">Logout</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
