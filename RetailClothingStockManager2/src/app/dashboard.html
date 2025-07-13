@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Clothing Stock Manager - Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <h1>Retail Clothing Stock Manager - Dashboard</h1>
+
+    <!-- Note: All below sections use temporary variables or sample numbers, please update them! -->>
+    
+    <hr>
+    
+    <!-- Summary Stats -->
+    <div>
+        <h3>Summary Statistics</h3>
+        <table border="1">
+            <tr>
+                <td><strong>Total Users (Staff + Owner):</strong></td>
+                <td id="totalUsers">25</td>
+            </tr>
+            <tr>
+                <td><strong>Active Users:</strong></td>
+                <td id="activeUsers">18</td>
+            </tr>
+            <tr>
+                <td><strong>Inactive Users:</strong></td>
+                <td id="inactiveUsers">7</td>
+            </tr>
+            <tr>
+                <td><strong>Total Stock Requests:</strong></td>
+                <td id="stockRequests">12</td>
+            </tr>
+            <tr>
+                <td><strong>Low Stock Alerts:</strong></td>
+                <td id="lowStockAlerts">8</td>
+            </tr>
+        </table>
+    </div>
+    
+    <hr>
+    
+    <!-- Active vs Inactive Users Chart -->
+    <div>
+        <h3>Active vs Inactive Users</h3>
+        <canvas id="userChart" width="400" height="200"></canvas>
+    </div>
+    
+    <hr>
+    
+    <!-- Stock by Category Chart -->
+    <div>
+        <h3>Stock by Category</h3>
+        <canvas id="stockChart" width="400" height="200"></canvas>
+    </div>
+    
+    <hr>
+    
+    <!-- Lowest Items in Stock -->
+    <div>
+        <h3>Lowest Items in Stock</h3>
+        <table border="1" id="lowStockTable">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Minimum Required</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="lowStockBody">
+            </tbody>
+        </table>
+    </div>
+    
+    <hr>
+    
+    <!-- All Products Table -->
+    <div>
+        <h3>All Products</h3>
+        <table border="1" id="productsTable">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Price</th>
+                    <th>Last Updated</th>
+                </tr>
+            </thead>
+            <tbody id="productsBody">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Sample data
+        const products = [];
+
+        let allProducts = products;
+        let filteredProducts = products;
+
+        // Initializes the dashboard
+        function initDashboard() {
+            populateProductsTable();
+            populateLowStockTable();
+            createUserChart();
+            createStockChart();
+        }
+
+        // Filters products by category
+        function filterProducts() {
+            const category = document.getElementById('categoryFilter').value;
+            
+            if (category === '') {
+                filteredProducts = allProducts;
+            } else {
+                filteredProducts = allProducts.filter(product => product.category === category);
+            }
+            
+            populateProductsTable();
+        }
+
+        // Populates products table
+        function populateProductsTable() {
+            const tbody = document.getElementById('productsBody');
+            tbody.innerHTML = '';
+            
+            filteredProducts.forEach(product => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.category}</td>
+                    <td>${product.stock}</td>
+                    <td>$${product.price}</td>
+                    <td>${product.lastUpdated}</td>
+                `;
+            });
+        }
+
+        // Populates low stock table
+        function populateLowStockTable() {
+            const tbody = document.getElementById('lowStockBody');
+            tbody.innerHTML = '';
+            
+            // Filters and sorts products by lowest stock
+            const lowStockProducts = allProducts
+                .filter(product => product.stock < product.minStock)
+                .sort((a, b) => a.stock - b.stock);
+            
+            lowStockProducts.forEach(product => {
+                const row = tbody.insertRow();
+                const status = product.stock === 0 ? 'Out of Stock' : 'Low Stock';
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.category}</td>
+                    <td>${product.stock}</td>
+                    <td>${product.minStock}</td>
+                    <td>${status}</td>
+                `;
+            });
+        }
+
+        // Creates user chart
+        function createUserChart() {
+            const ctx = document.getElementById('userChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Active Users', 'Inactive Users'],
+                    datasets: [{
+                        data: [18, 7],
+                        backgroundColor: ['#4CAF50', '#FF6B6B']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Creates stock by category chart
+        function createStockChart() {
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            
+            // Calculates stocks by category
+            const categoryStock = {};
+            allProducts.forEach(product => {
+                if (categoryStock[product.category]) {
+                    categoryStock[product.category] += product.stock;
+                } else {
+                    categoryStock[product.category] = product.stock;
+                }
+            });
+            
+            const labels = Object.keys(categoryStock);
+            const data = Object.values(categoryStock);
+            
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initializes the dashboard when page loads
+        window.onload = initDashboard;
+    </script>
+</body>
+</html>
