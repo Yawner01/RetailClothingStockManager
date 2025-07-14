@@ -1,46 +1,13 @@
 <div class="container">
   <header class="header">
-    <h1>Admin Panel</h1>
-    <p>Manage users, products, and categories.</p>
+    <h1>Staff Panel</h1>
+    <p>Manage products and categories.</p>
   </header>
 
   <!-- Analytics Section -->
    <section class="management-section">
     <div class="section-header"><h2>Analytics Dashboard</h2></div>
-    <app-analytics-dashboard [userRole]="'Owner'"></app-analytics-dashboard>
-  </section>
-
-  <!-- User Management Section -->
-  <section class="management-section">
-    <div class="section-header">
-      <h2>User Management</h2><button (click)="getUsers()" class="btn btn-secondary">Refresh Users</button>
-    </div>
-    <div *ngIf="isLoadingUsers" class="loading-message">Loading users...</div>
-    <div *ngIf="!isLoadingUsers && users.length === 0" class="empty-message">No users found.</div>
-    <ul *ngIf="!isLoadingUsers && users.length > 0" class="item-list">
-      <li *ngFor="let user of users">
-        <div *ngIf="!user.isEditing" class="item-content">
-          <div class="item-info"><span class="item-name"><strong>{{ user.username }}</strong></span><span
-              class="item-detail">Role: {{ user.role }}</span></div>
-          <div class="item-actions"><button (click)="startEdit(user)"
-              class="btn btn-sm btn-primary">Edit</button><button class="btn btn-sm btn-danger" disabled>Delete</button>
-          </div>
-        </div>
-        <div *ngIf="user.isEditing" class="item-content edit-mode">
-          <div class="edit-fields">
-            <div class="form-field-inline"><label>Username:</label><input type="text" [(ngModel)]="user.username"
-                class="form-control-sm"></div>
-            <div class="form-field-inline"><label>Role:</label><select [(ngModel)]="user.role" class="form-control-sm">
-                <option value="Owner">Owner</option>
-                <option value="Staff">Staff</option>
-                <option value="Inactive">Inactive</option>
-              </select></div>
-          </div>
-          <div class="item-actions"><button (click)="saveUser(user)" class="btn btn-sm btn-success">Save</button><button
-              (click)="cancelEdit(user)" class="btn btn-sm btn-secondary">Cancel</button></div>
-        </div>
-      </li>
-    </ul>
+    <app-analytics-dashboard [userRole]="'Staff'"></app-analytics-dashboard>
   </section>
 
   <!-- Product Management Section -->

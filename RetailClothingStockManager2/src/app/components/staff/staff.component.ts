@@ -14,24 +14,20 @@ export interface Product {
   categoryId: number;
   status: string;
   category?: Category;
-  isEditing?: boolean;
+  isEditing?: boolean; 
 }
 
 @Component({
-  selector: 'app-admin',
+  selector: 'app-staff',
   standalone: true,
   imports: [CommonModule, FormsModule, AnalyticsDashboardComponent],
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css']
+  templateUrl: './staff.component.html',
+  styleUrls: ['./staff.component.css']
 })
-export class AdminComponent implements OnInit {
+export class StaffComponent implements OnInit {
   //FIlter properties 
   filteredProducts: Product[] = [];
   selectedCategoryId: number = 0;
-
-  //User properties
-  users: User[] = [];
-  private userEditCache: { [key: number]: User } = {};
 
   //Product properties
   products: Product[] = [];
@@ -40,8 +36,6 @@ export class AdminComponent implements OnInit {
   //Category properties
   categories: Category[] = [];
 
-  //State management
-  isLoadingUsers = true;
   isLoadingCategories = true;
   isLoadingProducts = true;
   isAddProductVisible = false;
@@ -62,16 +56,9 @@ export class AdminComponent implements OnInit {
   }
 
   loadInitialData(): void {
-    this.getUsers();
     this.getCategories();
     this.getProducts();
   }
-
-  //User Management
-  getUsers(): void { this.isLoadingUsers = true; this.userService.getUsers().subscribe({ next: (data) => { this.users = data.map(user => ({ ...user, isEditing: false })); this.isLoadingUsers = false; }, error: (err) => { console.error('Error fetching users:', err); this.isLoadingUsers = false; } }); }
-  startEdit(user: User): void { this.userEditCache[user.userId] = { ...user }; user.isEditing = true; }
-  cancelEdit(user: User): void { Object.assign(user, this.userEditCache[user.userId]); user.isEditing = false; delete this.userEditCache[user.userId]; }
-  saveUser(user: User): void { this.userService.updateUser(user).subscribe({ next: () => { user.isEditing = false; delete this.userEditCache[user.userId]; }, error: (err) => { console.error('Error updating user:', err); } }); }
 
   //Category Management
   getCategories(): void { this.isLoadingCategories = true; this.categoryService.getCategories().subscribe({ next: (data) => { this.categories = data; this.isLoadingCategories = false; }, error: (err) => { console.error('Error fetching categories:', err); this.isLoadingCategories = false; } }); }
@@ -82,7 +69,7 @@ export class AdminComponent implements OnInit {
     this.http.get<Product[]>(`${this.apiBaseUrl}/Products`).subscribe({
       next: (data) => {
         this.products = data.map(product => ({ ...product, isEditing: false }));
-        this.applyFilter(); //Applying filter options after getting data
+        this.applyFilter();
         this.isLoadingProducts = false;
       },
       error: (err) => {

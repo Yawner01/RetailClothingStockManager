@@ -1,0 +1,77 @@
+<div class="analytics-container" *ngIf="!isLoading && summary">
+  <!-- View Toggle Buttons -->
+  <div class="view-toggle">
+    <button (click)="setView('stock')" [class.active]="activeView === 'stock'">
+      Stock/Product Information
+    </button>
+    <button *ngIf="userRole === 'Owner'" (click)="setView('users')" [class.active]="activeView === 'users'">
+      User Information
+    </button>
+  </div>
+
+  <!-- Stock Information View -->
+  <div *ngIf="activeView === 'stock'">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h4>New Stock Alerts</h4>
+        <p>{{ summary.lowStockAlerts }}</p>
+      </div>
+    </div>
+    <div class="details-grid mt-3">
+      <div class="chart-container">
+        <canvas #pieChart></canvas>
+      </div>
+      <div class="list-container">
+        <h4>Lowest Items in Stock</h4>
+        
+        <!-- NEW: Filter Controls -->
+        <div class="filter-controls">
+          <div class="filter-group">
+            <label for="categoryFilter">Category</label>
+            <select id="categoryFilter" [(ngModel)]="selectedCategoryId" (ngModelChange)="onCategoryChange()">
+              <option [value]="0">All</option>
+              <option *ngFor="let cat of allCategories" [value]="cat.categoryId">{{ cat.catagoryName }}</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="productFilter">Product</label>
+            <select id="productFilter" [(ngModel)]="selectedProductId" (ngModelChange)="applyFilters()">
+              <option [value]="0">All</option>
+              <option *ngFor="let prod of availableProductsForFilter" [value]="prod.productId">{{ prod.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <ul class="item-list">
+          <li *ngFor="let item of filteredLowestStockItems">
+            <span>{{ item.name }}</span>
+            <span class="quantity">{{ item.quantity }}</span>
+          </li>
+          <li *ngIf="filteredLowestStockItems.length === 0" class="no-results">
+            No items match your filter.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Information View -->
+  <div *ngIf="activeView === 'users' && userRole === 'Owner'">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h4>Total Users</h4>
+        <p>{{ summary.totalUsers }}</p>
+      </div>
+      <div class="stat-card">
+        <h4>Active Users</h4>
+        <p>{{ summary.activeUsers }}</p>
+      </div>
+      <div class="stat-card">
+        <h4>Inactive Users</h4>
+        <p><span class="inactive">{{ summary.inactiveUsers }}</span></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div *ngIf="isLoading" class="loading-message">Loading analytics...</div>
