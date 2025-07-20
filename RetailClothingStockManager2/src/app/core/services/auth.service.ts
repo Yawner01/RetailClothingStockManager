@@ -13,7 +13,7 @@ export class AuthService {
   currentUserRole: string | null = null;
   currentUserUsername: string | null = null;
 
-  private apiBaseUrl = environment.apiBaseUrl;
+  private apiBaseUrl = 'http://localhost:5212/api'
 
   constructor(private http: HttpClient, private router: Router) { }
 

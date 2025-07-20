@@ -12,7 +12,7 @@ export interface Category {
   providedIn: 'root'
 })
 export class CategoryService {
-  private apiBaseUrl = environment.apiBaseUrl;
+  private apiBaseUrl = 'http://localhost:5212/api'
 
   constructor(private http: HttpClient) { }
 

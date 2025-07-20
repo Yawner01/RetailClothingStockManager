@@ -45,7 +45,7 @@ export class StaffComponent implements OnInit {
   //Form model
   newProduct = { name: '', price: 0, quantity: 0, categoryId: 0, status: 'In Stock' };
 
-  private apiBaseUrl = environment.apiBaseUrl;
+  private apiBaseUrl = 'http://localhost:5212/api'
 
   constructor(
     private userService: UserService,

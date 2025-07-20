@@ -52,7 +52,7 @@ export class AnalyticsDashboardComponent implements OnInit {
   selectedCategoryId: number = 0; // 0 for "All"
   selectedProductId: number = 0; // 0 for "All"
 
-  private apiBaseUrl = environment.apiBaseUrl;
+  private apiBaseUrl = 'http://localhost:5212/api'
 
   constructor(private http: HttpClient) {}
 
