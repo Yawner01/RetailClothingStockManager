@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,7 @@ export class AuthService {
   currentUserRole: string | null = null;
   currentUserUsername: string | null = null;
 
-  // Base URL for your backend API.
-  private apiBaseUrl = 'http://localhost:5212/api';
+  private apiBaseUrl = environment.apiBaseUrl;
 
   constructor(private http: HttpClient, private router: Router) { }
 

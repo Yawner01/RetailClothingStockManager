@@ -5,6 +5,7 @@ import { UserService, User } from '../../core/services/user.service';
 import { CategoryService, Category } from '../../core/services/category.service';
 import { HttpClient } from '@angular/common/http';
 import { AnalyticsDashboardComponent } from '../analytics-dashboard/analytics-dashboard.component';
+import { environment } from '../../../environments/environment';
 
 export interface Product {
   productId: number;
@@ -67,7 +68,7 @@ export class AdminComponent implements OnInit {
   //Form model
   newProduct = { name: '', price: 0, quantity: 0, categoryId: 0, status: 'In Stock' };
 
-  private apiBaseUrl = 'http://localhost:5212/api';
+  private apiBaseUrl = environment.apiBaseUrl;
 
   constructor(
     private userService: UserService,

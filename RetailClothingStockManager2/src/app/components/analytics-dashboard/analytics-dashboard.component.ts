@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
+import { environment } from '../../../environments/environment';
 
 
 export interface Product {
@@ -51,7 +52,7 @@ export class AnalyticsDashboardComponent implements OnInit {
   selectedCategoryId: number = 0; // 0 for "All"
   selectedProductId: number = 0; // 0 for "All"
 
-  private apiBaseUrl = 'http://localhost:5212/api';
+  private apiBaseUrl = environment.apiBaseUrl;
 
   constructor(private http: HttpClient) {}
 
