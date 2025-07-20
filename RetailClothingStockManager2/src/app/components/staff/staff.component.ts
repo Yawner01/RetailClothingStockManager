@@ -14,7 +14,8 @@ export interface Product {
   categoryId: number;
   status: string;
   category?: Category;
-  isEditing?: boolean; 
+  isEditing?: boolean;
+  isRequested?: boolean;
 }
 
 @Component({
@@ -75,6 +76,19 @@ export class StaffComponent implements OnInit {
       error: (err) => {
         console.error('Error fetching products:', err);
         this.isLoadingProducts = false;
+      }
+    });
+  }
+  requestStock(product: Product): void {
+    product.isRequested = true; 
+    
+    this.http.post(`${this.apiBaseUrl}/Alerts`, product.productId).subscribe({
+      next: () => {
+        console.log(`Stock request sent for ${product.name}`);
+      },
+      error: (err) => {
+        console.error('Error sending stock request:', err);
+        product.isRequested = false;
       }
     });
   }

@@ -16,6 +16,13 @@ export interface Product {
   category?: Category;
   isEditing?: boolean;
 }
+export interface Alert {
+  alertId: number;
+  productId: number;
+  timestamp: string;
+  status: string;
+  product: Product;
+}
 
 @Component({
   selector: 'app-admin',
@@ -28,6 +35,10 @@ export class AdminComponent implements OnInit {
   //FIlter properties 
   filteredProducts: Product[] = [];
   selectedCategoryId: number = 0;
+
+  //Alert properties
+  alerts: Alert[] = [];
+  isLoadingAlerts = true;
 
   //User properties
   users: User[] = [];
@@ -45,6 +56,13 @@ export class AdminComponent implements OnInit {
   isLoadingCategories = true;
   isLoadingProducts = true;
   isAddProductVisible = false;
+
+  isAddUserVisible = false;
+  newUser = {
+    username: '',
+    password: '',
+    role: 'Staff' // Default role for new users
+  }
 
   //Form model
   newProduct = { name: '', price: 0, quantity: 0, categoryId: 0, status: 'In Stock' };
@@ -65,6 +83,7 @@ export class AdminComponent implements OnInit {
     this.getUsers();
     this.getCategories();
     this.getProducts();
+    this.getAlerts();
   }
 
   //User Management
@@ -72,6 +91,24 @@ export class AdminComponent implements OnInit {
   startEdit(user: User): void { this.userEditCache[user.userId] = { ...user }; user.isEditing = true; }
   cancelEdit(user: User): void { Object.assign(user, this.userEditCache[user.userId]); user.isEditing = false; delete this.userEditCache[user.userId]; }
   saveUser(user: User): void { this.userService.updateUser(user).subscribe({ next: () => { user.isEditing = false; delete this.userEditCache[user.userId]; }, error: (err) => { console.error('Error updating user:', err); } }); }
+
+   addUser(): void {
+    if (!this.newUser.username || !this.newUser.password) {
+      alert('Username and password are required.');
+      return;
+    }
+    this.http.post(`${this.apiBaseUrl}/Users`, this.newUser).subscribe({
+      next: () => {
+        this.isAddUserVisible = false;
+        this.getUsers();
+        this.newUser = { username: '', password: '', role: 'Staff' };
+      },
+      error: (err) => {
+        console.error('Error adding user:', err);
+        alert(err.error || 'Failed to add user.');
+      }
+    });
+  }
 
   //Category Management
   getCategories(): void { this.isLoadingCategories = true; this.categoryService.getCategories().subscribe({ next: (data) => { this.categories = data; this.isLoadingCategories = false; }, error: (err) => { console.error('Error fetching categories:', err); this.isLoadingCategories = false; } }); }
@@ -156,5 +193,30 @@ export class AdminComponent implements OnInit {
 
   onFilterChange(): void {
     this.applyFilter();
+  }
+
+  getAlerts(): void {
+    this.isLoadingAlerts = true;
+    this.http.get<Alert[]>(`${this.apiBaseUrl}/Alerts`).subscribe({
+      next: (data) => {
+        this.alerts = data;
+        this.isLoadingAlerts = false;
+      },
+      error: (err) => {
+        console.error('Error fetching alerts:', err);
+        this.isLoadingAlerts = false;
+      }
+    });
+  }
+
+  handleAlert(alert: Alert, newStatus: 'Acknowledged' | 'Rejected'): void {
+    this.http.put(`${this.apiBaseUrl}/Alerts/${alert.alertId}/status`, { status: newStatus }).subscribe({
+      next: () => {
+        this.alerts = this.alerts.filter(a => a.alertId !== alert.alertId);
+      },
+      error: (err) => {
+        console.error(`Error updating alert ${alert.alertId} to ${newStatus}:`, err);
+      }
+    });
   }
 }

@@ -10,6 +10,28 @@
     <app-analytics-dashboard [userRole]="'Owner'"></app-analytics-dashboard>
   </section>
 
+  <!--Stock Alert Management Section -->
+  <section class="management-section">
+    <div class="section-header">
+      <h2>Stock Requests</h2>
+      <button (click)="getAlerts()" class="btn btn-secondary">Refresh Requests</button>
+    </div>
+    <div *ngIf="isLoadingAlerts" class="loading-message">Loading requests...</div>
+    <div *ngIf="!isLoadingAlerts && alerts.length === 0" class="empty-message">No new stock requests.</div>
+    <ul *ngIf="!isLoadingAlerts && alerts.length > 0" class="item-list">
+      <li *ngFor="let alert of alerts">
+        <div class="item-info">
+            <span class="item-name"><strong>{{ alert.product.name }}</strong></span>
+            <span class="item-detail">Requested on: {{ alert.timestamp | date:'short' }}</span>
+        </div>
+        <div class="item-actions">
+            <button (click)="handleAlert(alert, 'Acknowledged')" class="btn btn-sm btn-success">Approve</button>
+            <button (click)="handleAlert(alert, 'Rejected')" class="btn btn-sm btn-danger">Reject</button>
+        </div>
+      </li>
+    </ul>
+  </section>
+
   <!-- User Management Section -->
   <section class="management-section">
     <div class="section-header">
@@ -42,6 +64,39 @@
       </li>
     </ul>
   </section>
+
+<!-- Add User Section -->
+    <div class="actions-section">
+      <button *ngIf="!isAddUserVisible" (click)="isAddUserVisible = true" class="btn btn-primary">
+        Create New User
+      </button>
+
+      <div *ngIf="isAddUserVisible" class="form-container">
+        <h3>Create New User</h3>
+        <form (ngSubmit)="addUser()" #userForm="ngForm">
+          <div class="form-field">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" [(ngModel)]="newUser.username" required>
+          </div>
+          <div class="form-field">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" [(ngModel)]="newUser.password" required>
+          </div>
+          <div class="form-field">
+            <label for="role">Role:</label>
+            <select id="role" name="role" [(ngModel)]="newUser.role" required>
+              <option value="Staff">Staff</option>
+              <option value="Owner">Owner</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+          <div class="form-buttons">
+            <button type="submit" class="btn btn-success" [disabled]="!userForm.valid">Save User</button>
+            <button type="button" (click)="isAddUserVisible = false" class="btn btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
   <!-- Product Management Section -->
   <section class="management-section">

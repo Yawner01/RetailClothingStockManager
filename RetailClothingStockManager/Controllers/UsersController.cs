@@ -12,6 +12,12 @@ public class UpdateUserRequest
     public string Role { get; set; }
 }
 
+public class CreateUserRequest
+{
+    public string Username { get; set; }
+    public string Password { get; set; }
+    public string Role { get; set; }
+}
 
 [ApiController]
 [Route("api/[controller]")]
@@ -71,5 +77,30 @@ public class UsersController : ControllerBase
         }
 
         return NoContent();
+    }
+    [HttpPost]
+    public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserRequest createUserRequest)
+    {
+        if (createUserRequest == null || string.IsNullOrEmpty(createUserRequest.Username) || string.IsNullOrEmpty(createUserRequest.Password))
+        {
+            return BadRequest("Username and password are required.");
+        }
+
+        if (await _context.Users.AnyAsync(u => u.Username == createUserRequest.Username))
+        {
+            return Conflict("A user with this username already exists.");
+        }
+
+        var user = new User
+        {
+            Username = createUserRequest.Username,
+            PasswordHash = createUserRequest.Password,
+            Role = createUserRequest.Role
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetUsers), new { id = user.UserId }, new { user.UserId, user.Username, user.Role });
     }
 }

@@ -43,7 +43,6 @@
 
     <div class="section-header">
       <h3>Current Inventory</h3>
-      <!-- NEW: Category Filter Dropdown -->
       <div class="filter-container">
           <label for="categoryFilter">Filter by Category:</label>
           <select id="categoryFilter" [(ngModel)]="selectedCategoryId" (ngModelChange)="onFilterChange()">
@@ -67,6 +66,12 @@
             <span class="item-detail">Status: {{ product.status }}</span>
           </div>
           <div class="item-actions">
+            <button *ngIf="product.quantity <= 5" 
+                    (click)="requestStock(product)" 
+                    [disabled]="product.isRequested"
+                    class="btn btn-sm btn-warning">
+              {{ product.isRequested ? 'Requested' : 'Request more stock' }}
+            </button>
             <button (click)="startEditProduct(product)" class="btn btn-sm btn-primary">Edit</button>
             <button class="btn btn-sm btn-danger" disabled>Delete</button>
           </div>
@@ -97,4 +102,4 @@
       </li>
     </ul>
   </section>
-</div>
+</div>s
